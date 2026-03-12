@@ -174,7 +174,7 @@
 
       .prompt-row {
         display: flex;
-        gap: 10px;
+        gap: 0;
         align-items: baseline;
         margin-top: 10px;
       }
@@ -182,18 +182,49 @@
       .prompt {
         color: var(--muted);
         flex: 0 0 auto;
+        white-space: pre;
+      }
+
+      .typed {
+        flex: 0 1 auto;
+        min-width: 0;
+        white-space: pre;
+      }
+
+      .cursor {
+        color: var(--fg1);
+        flex: 0 0 auto;
+        line-height: 1.2;
+        transform: translateY(-1px);
+        animation: blink 1s steps(1, end) infinite;
+      }
+
+      @keyframes blink {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
       }
 
       .cmdline {
-        flex: 1 1 auto;
-        min-width: 60px;
+        /* Keep a real input for mobile keyboard and copy/paste, but render text ourselves. */
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: 0;
         background: transparent;
         border: none;
         outline: none;
         color: var(--fg0);
         font: inherit;
-        padding: 0;
-        caret-color: var(--fg1);
+        caret-color: transparent;
       }
 
       .cmdline::selection {
@@ -234,6 +265,8 @@
           <div id="output" aria-live="polite" aria-atomic="false"></div>
           <div class="prompt-row" id="promptRow">
             <span class="prompt" id="prompt"></span>
+            <span class="typed" id="typed"></span>
+            <span class="cursor" id="cursor" aria-hidden="true">_</span>
             <input
               class="cmdline"
               id="cmdline"
@@ -259,7 +292,7 @@
         location: "Lokanthali, Bhaktapur",
         email: "veekrum.thapa@gmail.com",
         github: "https://github.com/veekrum",
-        linkedin: "https://linkedin.com/in/veekrum"
+        linkedin: "https://www.linkedin.com/in/bikram-chidi-b53b56141/"
       };
       const PROMPT = `${PROFILE.handle}@portfolio:~$`;
 
@@ -274,6 +307,7 @@
         "education",
         "contact",
         "jokes",
+        "htop",
         "skills",
         "projects",
         "neofetch",
@@ -289,11 +323,12 @@
       const cmdline = document.getElementById("cmdline");
       const prompt = document.getElementById("prompt");
       const promptRow = document.getElementById("promptRow");
+      const typed = document.getElementById("typed");
 
       const history = [];
       let historyIndex = 0;
 
-      prompt.textContent = PROMPT;
+      prompt.textContent = `${PROMPT} `;
 
       const JOKES = [
         [
@@ -328,6 +363,25 @@
           "Why did the monitoring alert go off at 3am?",
           "Because that's what monitoring alerts do. Always. Forever."
         ]
+      ];
+
+      const PROJECT_PROCESSES = [
+        {
+          name: "k8s-monitoring-stack",
+          hint: "Prometheus/Grafana/ELK"
+        },
+        {
+          name: "gitlab-cicd-migration",
+          hint: "Pipelines + runners"
+        },
+        {
+          name: "distributed-job-runner",
+          hint: "Workers + queues"
+        },
+        {
+          name: "helm-services",
+          hint: "20+ microservices"
+        }
       ];
 
       function scrollToBottom() {
@@ -365,7 +419,7 @@
         printLine("");
         printLine("            DEVOPS CONTINUOUS LOOP");
         printLine("");
-        printLine("Welcome to Veekrum's terminal portfolio.", "dim");
+        printLine("Welcome to Bikram's terminal portfolio.", "dim");
         printLine(
           "Type `help` for commands. Try `whoami` and `uptime`.",
           "dim"
@@ -404,14 +458,45 @@
       }
 
       function resetPrompt() {
-        prompt.textContent = PROMPT;
+        prompt.textContent = `${PROMPT} `;
         cmdline.value = "";
+        typed.textContent = "";
         cmdline.focus();
         scrollToBottom();
       }
 
       function normalizeSpaces(s) {
         return s.replace(/\s+/g, " ").trim();
+      }
+
+      function padRight(s, width) {
+        const str = String(s);
+        return str.length >= width ? str.slice(0, width) : str + " ".repeat(width - str.length);
+      }
+
+      function padLeft(s, width) {
+        const str = String(s);
+        return str.length >= width ? str.slice(0, width) : " ".repeat(width - str.length) + str;
+      }
+
+      function rand(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function clamp(n, min, max) {
+        return Math.max(min, Math.min(max, n));
+      }
+
+      function fmtPct(n) {
+        return `${n.toFixed(1)}%`;
+      }
+
+      function fmtTime(seconds) {
+        const s = Math.max(0, Math.floor(seconds));
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        const sec = s % 60;
+        return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
       }
 
       function runCommand(raw) {
@@ -431,7 +516,7 @@
           case "help": {
             printLine("Available commands:", "dim");
             printLine(
-              "help, uptime, whoami, summary, experience, education, contact, jokes, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
+              "help, uptime, whoami, summary, experience, education, contact, jokes, htop, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
               "dim"
             );
             break;
@@ -528,6 +613,54 @@
             for (const line of joke) printLine(line);
             break;
           }
+          case "htop": {
+            // Snapshot-only simulation (no live keybinds) to keep the rest of the terminal simple.
+            output.innerHTML = "";
+
+            const exp = getExperienceUptimeString();
+            const now = new Date();
+            const timeStr = now.toLocaleString();
+
+            const cpu = clamp(rand(4, 38), 0, 100);
+            const mem = clamp(rand(12, 62), 0, 100);
+            const load1 = rand(0.15, 1.65).toFixed(2);
+            const load5 = rand(0.10, 1.20).toFixed(2);
+            const load15 = rand(0.05, 0.90).toFixed(2);
+
+            printLine(`htop - ${PROFILE.handle}@portfolio    ${timeStr}`, "dim");
+            printLine(
+              `Uptime: ${exp ?? "n/a"}    Load avg: ${load1} ${load5} ${load15}`,
+              "dim"
+            );
+            printLine(
+              `CPU  [${"#".repeat(Math.round(cpu / 5)).padEnd(20, ".")}] ${fmtPct(cpu)}   MEM [${"#".repeat(Math.round(mem / 5)).padEnd(20, ".")}] ${fmtPct(mem)}`,
+              "dim"
+            );
+            printLine("");
+
+            const header =
+              `${padLeft("PID", 5)} ${padRight("USER", 8)} ${padLeft("PRI", 3)} ${padLeft("NI", 2)} ${padRight("S", 1)} ` +
+              `${padLeft("CPU%", 6)} ${padLeft("MEM%", 6)} ${padLeft("TIME", 8)} COMMAND`;
+            printLine(header, "dim");
+            printLine("-".repeat(Math.min(86, header.length)), "dim");
+
+            PROJECT_PROCESSES.forEach((p, i) => {
+              const pid = 1200 + i * 37;
+              const state = i === 0 ? "R" : "S";
+              const cpuPct = clamp(rand(0.2, 18), 0, 100);
+              const memPct = clamp(rand(0.1, 6.5), 0, 100);
+              const time = fmtTime(rand(60, 7200));
+              const cmd = `${p.name}  (${p.hint})`;
+              const row =
+                `${padLeft(pid, 5)} ${padRight(PROFILE.handle, 8)} ${padLeft(20, 3)} ${padLeft(0, 2)} ${padRight(state, 1)} ` +
+                `${padLeft(cpuPct.toFixed(1), 6)} ${padLeft(memPct.toFixed(1), 6)} ${padLeft(time, 8)} ${cmd}`;
+              printLine(row);
+            });
+
+            printLine("");
+            printLine("Tip: run `projects` for details. Type `clear` to exit dashboard.", "dim");
+            break;
+          }
           case "skills": {
             printLine("Linux");
             printLine("Kubernetes, Helm");
@@ -543,9 +676,10 @@
             break;
           }
           case "projects": {
-            printLine("- Kubernetes Monitoring Stack");
-            printLine("- GitLab CI/CD Migration");
-            printLine("- Distributed Job Runner");
+            printLine("- Kubernetes Monitoring Stack (Prometheus/Grafana/ELK)");
+            printLine("- GitLab CI/CD Migration (pipelines + runners)");
+            printLine("- Distributed Job Runner (workers + queues)");
+            printLine("- Helm Services (20+ microservices)");
             break;
           }
           case "neofetch": {
@@ -649,6 +783,7 @@
           e.preventDefault();
           historyIndex = Math.max(0, historyIndex - 1);
           cmdline.value = history[historyIndex] ?? "";
+          typed.textContent = cmdline.value;
           cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length);
           return;
         }
@@ -658,6 +793,7 @@
           e.preventDefault();
           historyIndex = Math.min(history.length, historyIndex + 1);
           cmdline.value = history[historyIndex] ?? "";
+          typed.textContent = cmdline.value;
           cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length);
           return;
         }
@@ -674,9 +810,14 @@
           const match = COMMANDS.find((c) => c.startsWith(head));
           if (match) {
             cmdline.value = match;
+            typed.textContent = cmdline.value;
             cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length);
           }
         }
+      });
+
+      cmdline.addEventListener("input", () => {
+        typed.textContent = cmdline.value;
       });
 
       // Keep focus behavior terminal-like.
