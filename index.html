@@ -252,7 +252,6 @@
     </div>
 
     <script>
-      const PROMPT = "bikramC@portfolio:~$";
       const PROFILE = {
         name: "Bikram Chidi",
         handle: "bikramC",
@@ -262,6 +261,7 @@
         github: "https://github.com/veekrum",
         linkedin: "https://linkedin.com/in/veekrum"
       };
+      const PROMPT = `${PROFILE.handle}@portfolio:~$`;
 
       // Years of experience (CV: DevOps Trainee Feb 2017).
       const EXPERIENCE_START_ISO = "2017-02-01";
@@ -273,6 +273,7 @@
         "experience",
         "education",
         "contact",
+        "jokes",
         "skills",
         "projects",
         "neofetch",
@@ -293,6 +294,41 @@
       let historyIndex = 0;
 
       prompt.textContent = PROMPT;
+
+      const JOKES = [
+        [
+          '"It works on my machine."',
+          '"Then we\'ll ship your machine."',
+          "-- The origin story of Docker"
+        ],
+        [
+          "Why did the DevOps engineer quit?",
+          "Because they had too many issues and not enough pull requests."
+        ],
+        [
+          "A DevOps engineer walks into a bar.",
+          'The bartender asks, "What\'ll it be?"',
+          'Engineer says, "The usual."',
+          "The bartender serves 12 beers, 3 of them are empty, 2 are on fire, and none of them are labeled."
+        ],
+        ['"We have 99 problems."', 'Kubernetes: "Here\'s 187 more."'],
+        [
+          "How many DevOps engineers does it take to change a lightbulb?",
+          "None. That's a hardware problem. Open a ticket."
+        ],
+        [
+          'A junior dev asks their manager: "Is it okay to deploy on Friday?"',
+          'Manager: "Sure, if you hate your weekend."'
+        ],
+        [
+          'Terraform plan: "I will create 3 resources."',
+          'Terraform apply: "I have destroyed production."'
+        ],
+        [
+          "Why did the monitoring alert go off at 3am?",
+          "Because that's what monitoring alerts do. Always. Forever."
+        ]
+      ];
 
       function scrollToBottom() {
         requestAnimationFrame(() => {
@@ -395,7 +431,7 @@
           case "help": {
             printLine("Available commands:", "dim");
             printLine(
-              "help, uptime, whoami, summary, experience, education, contact, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
+              "help, uptime, whoami, summary, experience, education, contact, jokes, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
               "dim"
             );
             break;
@@ -486,6 +522,12 @@
             );
             break;
           }
+          case "jokes": {
+            printLine("DEVOPS JOKE", "dim");
+            const joke = JOKES[Math.floor(Math.random() * JOKES.length)];
+            for (const line of joke) printLine(line);
+            break;
+          }
           case "skills": {
             printLine("Linux");
             printLine("Kubernetes, Helm");
@@ -517,7 +559,7 @@
           }
           case "ls": {
             printLine(
-              "about.txt  summary.txt  experience.txt  education.txt  contact.txt  skills.txt  projects.txt"
+              "about.txt  summary.txt  experience.txt  education.txt  contact.txt  jokes.txt  skills.txt  projects.txt"
             );
             break;
           }
@@ -545,6 +587,10 @@
             }
             if (file === "contact.txt") {
               runCommand("contact");
+              break;
+            }
+            if (file === "jokes.txt") {
+              runCommand("jokes");
               break;
             }
             if (file === "skills.txt") {
