@@ -1,13 +1,652 @@
----
-layout: default
-title: Bikram Chidi
----
-<div class="blurb">
-	<h1>Hi there, I'm Bikram Chidi!</h1>
-	<p>I'm best known as the horrible Devops from <em>A Touch of Evil</em> Don't trust me. <a href="/about">Read more about my life...</a></p>
-</div><!-- /.blurb -->
-<div class="blurb">
-	        <h1>Hi there, New things!</h1>
-		        <p>I'm best known as the horrible Devops from <em>A Touch of Evil</em> Don't trust me. <a href="/about">Read more about my life...</a></p>
-</div><!-- /.blurb -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BikramC | Terminal Portfolio</title>
+    <meta
+      name="description"
+      content="A terminal-style personal site. Type help."
+    />
+    <style>
+      :root {
+        --bg0: #050607;
+        --bg1: #070c10;
+        --fg0: #b8ffd8;
+        --fg1: #76f7b2;
+        --muted: #5fe0a1;
+        --warn: #ffd07a;
+        --err: #ff7a7a;
+        --border: rgba(118, 247, 178, 0.22);
+        --shadow: rgba(0, 0, 0, 0.55);
+      }
 
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        color: var(--fg0);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        background: radial-gradient(
+            1200px 900px at 20% 10%,
+            rgba(118, 247, 178, 0.12),
+            transparent 60%
+          ),
+          radial-gradient(
+            900px 700px at 80% 0%,
+            rgba(255, 208, 122, 0.08),
+            transparent 55%
+          ),
+          linear-gradient(180deg, var(--bg1), var(--bg0));
+      }
+
+      .frame {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 24px 16px 40px;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .chrome {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        background: rgba(6, 10, 12, 0.55);
+        box-shadow: 0 20px 60px var(--shadow);
+        border-radius: 14px;
+        backdrop-filter: blur(10px);
+      }
+
+      .dots {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .dot.red {
+        background: rgba(255, 122, 122, 0.9);
+        border-color: rgba(255, 122, 122, 0.35);
+      }
+      .dot.yellow {
+        background: rgba(255, 208, 122, 0.9);
+        border-color: rgba(255, 208, 122, 0.35);
+      }
+      .dot.green {
+        background: rgba(118, 247, 178, 0.9);
+        border-color: rgba(118, 247, 178, 0.35);
+      }
+
+      .title {
+        color: rgba(184, 255, 216, 0.9);
+        font-size: 13px;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .hint {
+        color: rgba(184, 255, 216, 0.6);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .terminal {
+        position: relative;
+        flex: 1;
+        min-height: 320px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(2, 4, 5, 0.62);
+        box-shadow: 0 20px 60px var(--shadow);
+        overflow: hidden;
+      }
+
+      .terminal::before {
+        content: "";
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03),
+          rgba(255, 255, 255, 0.03) 1px,
+          transparent 1px,
+          transparent 4px
+        );
+        opacity: 0.14;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        padding: 18px 16px 16px;
+        overflow: auto;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+
+      .line {
+        white-space: pre-wrap;
+        word-break: break-word;
+        line-height: 1.45;
+        font-size: 14px;
+      }
+
+      .line.dim {
+        color: rgba(184, 255, 216, 0.65);
+      }
+
+      .line.warn {
+        color: var(--warn);
+      }
+
+      .line.err {
+        color: var(--err);
+      }
+
+      .line a {
+        color: var(--fg1);
+        text-decoration: none;
+        border-bottom: 1px dashed rgba(118, 247, 178, 0.55);
+      }
+
+      .line a:hover {
+        border-bottom-style: solid;
+      }
+
+      .prompt-row {
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        margin-top: 10px;
+      }
+
+      .prompt {
+        color: var(--muted);
+        flex: 0 0 auto;
+      }
+
+      .cmdline {
+        flex: 1 1 auto;
+        min-width: 60px;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--fg0);
+        font: inherit;
+        padding: 0;
+        caret-color: var(--fg1);
+      }
+
+      .cmdline::selection {
+        background: rgba(118, 247, 178, 0.22);
+      }
+
+      .footer {
+        color: rgba(184, 255, 216, 0.55);
+        font-size: 12px;
+        text-align: center;
+        user-select: none;
+      }
+
+      @media (max-width: 520px) {
+        .hint {
+          display: none;
+        }
+        .line {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="chrome" aria-hidden="true">
+        <div class="dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <div class="title">bikramC@portfolio:~</div>
+        <div class="hint">Try: <span style="color: var(--fg1)">summary</span></div>
+      </div>
+
+      <main class="terminal" role="application" aria-label="Terminal portfolio">
+        <div class="screen" id="screen">
+          <div id="output" aria-live="polite" aria-atomic="false"></div>
+          <div class="prompt-row" id="promptRow">
+            <span class="prompt" id="prompt"></span>
+            <input
+              class="cmdline"
+              id="cmdline"
+              type="text"
+              inputmode="text"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              aria-label="Command line"
+            />
+          </div>
+        </div>
+      </main>
+
+      <div class="footer">Press Tab to autocomplete, Up/Down for history.</div>
+    </div>
+
+    <script>
+      const PROMPT = "bikramC@portfolio:~$";
+      const PROFILE = {
+        name: "Bikram Chidi",
+        handle: "bikramC",
+        role: "DevOps Engineer",
+        location: "Lokanthali, Bhaktapur",
+        email: "veekrum.thapa@gmail.com",
+        github: "https://github.com/veekrum",
+        linkedin: "https://linkedin.com/in/veekrum"
+      };
+
+      // Years of experience (CV: DevOps Trainee Feb 2017).
+      const EXPERIENCE_START_ISO = "2017-02-01";
+      const COMMANDS = [
+        "help",
+        "uptime",
+        "whoami",
+        "summary",
+        "experience",
+        "education",
+        "contact",
+        "skills",
+        "projects",
+        "neofetch",
+        "ls",
+        "cat",
+        "github",
+        "linkedin",
+        "clear"
+      ];
+
+      const screen = document.getElementById("screen");
+      const output = document.getElementById("output");
+      const cmdline = document.getElementById("cmdline");
+      const prompt = document.getElementById("prompt");
+      const promptRow = document.getElementById("promptRow");
+
+      const history = [];
+      let historyIndex = 0;
+
+      prompt.textContent = PROMPT;
+
+      function scrollToBottom() {
+        requestAnimationFrame(() => {
+          screen.scrollTop = screen.scrollHeight;
+        });
+      }
+
+      function printLine(text, className) {
+        const div = document.createElement("div");
+        div.className = className ? `line ${className}` : "line";
+        div.textContent = text;
+        output.appendChild(div);
+        scrollToBottom();
+      }
+
+      function printHTML(html, className) {
+        const div = document.createElement("div");
+        div.className = className ? `line ${className}` : "line";
+        div.innerHTML = html;
+        output.appendChild(div);
+        scrollToBottom();
+      }
+
+      function printBannerAndIntro() {
+        printLine("           _∞∞∞∞_        _∞∞∞∞_");
+        printLine("        ∞∞      ∞∞    ∞∞      ∞∞");
+        printLine("      ∞∞   PLAN   ∞∞∞∞   CODE   ∞∞");
+        printLine("     ∞∞                           ∞∞");
+        printLine("    ∞∞   BUILD     ∞∞∞∞    TEST    ∞∞");
+        printLine("     ∞∞                           ∞∞");
+        printLine("      ∞∞  RELEASE ∞∞∞∞  DEPLOY   ∞∞");
+        printLine("        ∞∞      ∞∞     ∞∞       ∞∞");
+        printLine("           ∞∞∞∞           ∞∞∞∞");
+        printLine("");
+        printLine("            DEVOPS CONTINUOUS LOOP");
+        printLine("");
+        printLine("Welcome to Veekrum's terminal portfolio.", "dim");
+        printLine(
+          "Type `help` for commands. Try `whoami` and `uptime`.",
+          "dim"
+        );
+        printLine(
+          "I am very passionate about Linux and fond of the open-source community.",
+          "dim"
+        );
+        printLine(
+          "Automation is the culture of DevOps: making work simpler and easier.",
+          "dim"
+        );
+        printLine("");
+      }
+
+      function getExperienceUptimeString() {
+        const start = new Date(EXPERIENCE_START_ISO + "T00:00:00Z");
+        if (Number.isNaN(start.getTime())) return null;
+
+        const now = new Date();
+        const ms = Math.max(0, now.getTime() - start.getTime());
+        const days = Math.floor(ms / 86400000);
+
+        const years = Math.floor(days / 365.2425);
+        const remainingDays = Math.max(0, days - Math.floor(years * 365.2425));
+        const months = Math.max(
+          0,
+          Math.min(11, Math.floor(remainingDays / 30.436875))
+        );
+
+        const parts = [];
+        if (years > 0) parts.push(`${years} year${years === 1 ? "" : "s"}`);
+        if (months > 0) parts.push(`${months} month${months === 1 ? "" : "s"}`);
+        if (parts.length === 0) parts.push(`${days} day${days === 1 ? "" : "s"}`);
+        return parts.join(", ");
+      }
+
+      function resetPrompt() {
+        prompt.textContent = PROMPT;
+        cmdline.value = "";
+        cmdline.focus();
+        scrollToBottom();
+      }
+
+      function normalizeSpaces(s) {
+        return s.replace(/\s+/g, " ").trim();
+      }
+
+      function runCommand(raw) {
+        const trimmed = raw.trim();
+
+        // Echo the executed command.
+        printLine(`${PROMPT} ${trimmed}`);
+
+        if (!trimmed) {
+          return;
+        }
+
+        const normalized = normalizeSpaces(trimmed);
+        const [cmd, ...args] = normalized.split(" ");
+
+        switch (cmd) {
+          case "help": {
+            printLine("Available commands:", "dim");
+            printLine(
+              "help, uptime, whoami, summary, experience, education, contact, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
+              "dim"
+            );
+            break;
+          }
+          case "uptime": {
+            const experience = getExperienceUptimeString();
+            if (!experience) {
+              printLine("uptime: invalid EXPERIENCE_START_ISO value", "err");
+              break;
+            }
+            printLine(`Experience uptime: ${experience}`);
+            break;
+          }
+          case "whoami": {
+            printLine(`${PROFILE.name} | ${PROFILE.role}`);
+            printLine("Kubernetes | GitLab CI/CD | Observability | Cloud automation", "dim");
+            printLine(PROFILE.location, "dim");
+            printLine(PROFILE.email, "dim");
+            printLine("Type `contact` for links.", "dim");
+            break;
+          }
+          case "summary": {
+            printLine("SUMMARY", "dim");
+            printLine(
+              "I am very passionate about Linux and fond of the open-source community. Automation is the culture of DevOps: making others' and my own work simpler and easier. I find DevOps an attractive and effective role. I am sincere, straightforward, and helpful; together we can create meaningful work."
+            );
+            break;
+          }
+          case "experience": {
+            printLine("WORK HISTORY", "dim");
+            printLine(
+              "1) DevOps Engineer (Feb 2021 - Present) - Hazesoft.co, Shankamul, Kathmandu"
+            );
+            printLine(
+              "   Lead team, manage GitLab + runners, CI/CD templates, helm/k8s for 20+ services, DigitalOcean + self-hosted OpenStack, Docker/Compose, NFS, Vault, VPN, ELK, Postgres/MySQL.",
+              "dim"
+            );
+            printLine(
+              "   E-commerce: sailracing.com, salamtak.me, commsure.com",
+              "dim"
+            );
+            printLine("");
+            printLine(
+              "2) DevOps Engineer (Feb 2019 - Jul 2020) - Tekvortex Pvt. Ltd (Cloudchomp), Pulchowk, Lalitpur"
+            );
+            printLine(
+              "   CI/CD with Jenkins + Bash, AWS CodeCommit integration via Lambda, Python utilities + AWS SDK, Terraform provisioning, monitoring/alerts, Azure exposure, JIRA, virtualization tools, Nagios + Slack alerts.",
+              "dim"
+            );
+            printLine("");
+            printLine(
+              "3) Jr. DevOps Engineer (Dec 2017 - Feb 2019) - YoungInnovations, Kumaripati, Lalitpur"
+            );
+            printLine(
+              "   Ansible provisioning, ELK stack, docker-compose microservices, GCP (Compute Engine/Storage), Nginx/Apache2, HAProxy, Asterisk (VOIP), Bash/Python utilities.",
+              "dim"
+            );
+            printLine("");
+            printLine(
+              "4) DevOps Trainee (Feb 2017 - Sep 2017) - CloudFactory (Sprout Technology), Bhaisipati, Lalitpur"
+            );
+            printLine(
+              "   AWS provisioning with Ansible, Prometheus + Grafana, Jenkins pipelines, app/db migration support, production debugging, MongoDB/Redis/RabbitMQ.",
+              "dim"
+            );
+            break;
+          }
+          case "education": {
+            printLine("EDUCATION", "dim");
+            printLine("SLC - Buddha Jyoti H.S.S, Rupandehi, Lumbini, Nepal");
+            printLine(
+              "Intermediate - Buddha Jyoti H.S.S, Rupandehi, Lumbini, Nepal"
+            );
+            printLine(
+              "BE Computer - Himalaya College of Engineering, Chyasal, Lalitpur"
+            );
+            break;
+          }
+          case "contact": {
+            printLine("CONTACT", "dim");
+            printLine(`Email: ${PROFILE.email}`);
+            printLine(`Location: ${PROFILE.location}`, "dim");
+            printHTML(
+              `GitHub: <a href="${PROFILE.github}" target="_blank" rel="noopener">${PROFILE.github}</a>`
+            );
+            printHTML(
+              `LinkedIn: <a href="${PROFILE.linkedin}" target="_blank" rel="noopener">${PROFILE.linkedin}</a>`
+            );
+            break;
+          }
+          case "skills": {
+            printLine("Linux");
+            printLine("Kubernetes, Helm");
+            printLine("Docker, Docker Compose, Docker Swarm");
+            printLine("GitLab (self-hosted), GitLab CI/CD, runners");
+            printLine("Jenkins");
+            printLine("Terraform, Ansible");
+            printLine("Observability: ELK, Prometheus, Grafana, CloudWatch, Nagios");
+            printLine("Cloud: AWS, GCP, DigitalOcean, OpenStack");
+            printLine("Networking: VPC, ALB, WAF, VPN, HAProxy, NFS");
+            printLine("Datastores: PostgreSQL, MySQL, MongoDB, Redis");
+            printLine("Messaging: RabbitMQ");
+            break;
+          }
+          case "projects": {
+            printLine("- Kubernetes Monitoring Stack");
+            printLine("- GitLab CI/CD Migration");
+            printLine("- Distributed Job Runner");
+            break;
+          }
+          case "neofetch": {
+            printLine(`User: ${PROFILE.name}`);
+            printLine(`Role: ${PROFILE.role}`);
+            printLine("Stack: Kubernetes / Helm / Docker");
+            printLine("CI/CD: GitLab CI/CD / Jenkins");
+            printLine("Cloud: AWS / GCP / DigitalOcean / OpenStack");
+            printLine("Focus: Automation + Observability");
+            break;
+          }
+          case "ls": {
+            printLine(
+              "about.txt  summary.txt  experience.txt  education.txt  contact.txt  skills.txt  projects.txt"
+            );
+            break;
+          }
+          case "cat": {
+            const file = args.join(" ");
+            if (!file) {
+              printLine("usage: cat <file>", "warn");
+              break;
+            }
+            if (file === "about.txt") {
+              runCommand("whoami");
+              break;
+            }
+            if (file === "summary.txt") {
+              runCommand("summary");
+              break;
+            }
+            if (file === "experience.txt") {
+              runCommand("experience");
+              break;
+            }
+            if (file === "education.txt") {
+              runCommand("education");
+              break;
+            }
+            if (file === "contact.txt") {
+              runCommand("contact");
+              break;
+            }
+            if (file === "skills.txt") {
+              runCommand("skills");
+              break;
+            }
+            if (file === "projects.txt") {
+              runCommand("projects");
+              break;
+            }
+            printLine(`cat: ${file}: No such file`, "err");
+            break;
+          }
+          case "github": {
+            const url = PROFILE.github;
+            printHTML(`GitHub: <a href="${url}" target="_blank" rel="noopener">${url}</a>`);
+            break;
+          }
+          case "linkedin": {
+            const url = PROFILE.linkedin;
+            printHTML(
+              `LinkedIn: <a href="${url}" target="_blank" rel="noopener">${url}</a>`
+            );
+            break;
+          }
+          case "clear": {
+            output.innerHTML = "";
+            printBannerAndIntro();
+            break;
+          }
+          default: {
+            printLine(`Command not found: ${cmd}`, "err");
+            printLine("Type `help` to see available commands.", "dim");
+          }
+        }
+      }
+
+      cmdline.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const cmd = cmdline.value;
+
+          // Only store non-empty commands.
+          if (cmd.trim()) {
+            history.push(cmd);
+            historyIndex = history.length;
+          }
+
+          runCommand(cmd);
+          resetPrompt();
+          return;
+        }
+
+        if (e.key === "ArrowUp") {
+          if (history.length === 0) return;
+          e.preventDefault();
+          historyIndex = Math.max(0, historyIndex - 1);
+          cmdline.value = history[historyIndex] ?? "";
+          cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length);
+          return;
+        }
+
+        if (e.key === "ArrowDown") {
+          if (history.length === 0) return;
+          e.preventDefault();
+          historyIndex = Math.min(history.length, historyIndex + 1);
+          cmdline.value = history[historyIndex] ?? "";
+          cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length);
+          return;
+        }
+
+        if (e.key === "Tab") {
+          e.preventDefault();
+          const current = cmdline.value;
+          const normalized = normalizeSpaces(current);
+          const [head, ...tail] = normalized.split(" ");
+
+          // Only autocomplete the command itself (first token).
+          if (tail.length > 0) return;
+
+          const match = COMMANDS.find((c) => c.startsWith(head));
+          if (match) {
+            cmdline.value = match;
+            cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length);
+          }
+        }
+      });
+
+      // Keep focus behavior terminal-like.
+      promptRow.addEventListener("pointerdown", () => {
+        cmdline.focus();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+          // If user starts typing anywhere, focus the terminal.
+          cmdline.focus();
+        }
+      });
+
+      // Auto-show banner + intro on load.
+      printBannerAndIntro();
+      resetPrompt();
+    </script>
+  </body>
+</html>
