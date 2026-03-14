@@ -314,7 +314,6 @@
         "jokes",
         "htop",
         "skills",
-        "projects",
         "neofetch",
         "ls",
         "cat",
@@ -370,6 +369,17 @@
         ]
       ];
 
+      const MOTDS = [
+        "Good DevOps is not about the biggest stack — it's about the right stack.",
+        "Badly designed DevOps is expensive. Well-designed DevOps saves time and money.",
+        "Automate what repeats. Secure what matters. Monitor what you depend on.",
+        "Build systems that are secure, reliable, and simple enough to trust.",
+        "DevOps should reduce friction, not create more complexity.",
+        "Security is not a gate at the end — it is part of the pipeline.",
+        "Reliable systems should also be sustainable systems.",
+        "Move fast, but leave observability on."
+      ];
+
       const PROJECT_PROCESSES = [
         {
           name: "k8s-monitoring-stack",
@@ -412,28 +422,32 @@
       }
 
       function printBannerAndIntro() {
-        printLine("           _∞∞∞∞_        _∞∞∞∞_");
-        printLine("        ∞∞      ∞∞    ∞∞      ∞∞");
-        printLine("      ∞∞   PLAN   ∞∞∞∞   CODE   ∞∞");
-        printLine("     ∞∞                           ∞∞");
-        printLine("    ∞∞   BUILD     ∞∞∞∞    TEST    ∞∞");
-        printLine("     ∞∞                           ∞∞");
-        printLine("      ∞∞  RELEASE ∞∞∞∞  DEPLOY   ∞∞");
-        printLine("        ∞∞      ∞∞     ∞∞       ∞∞");
-        printLine("           ∞∞∞∞           ∞∞∞∞");
+        const now = new Date();
+        const motd = MOTDS[Math.floor(Math.random() * MOTDS.length)];
+        printLine("[ OK ] Loading profile...", "dim");
+        printLine("[ OK ] Initializing interactive shell...", "dim");
+        printLine("[ OK ] Mounting projects...", "dim");
+        printLine("[ OK ] Starting observability modules...", "dim");
+        printLine("[ OK ] Applying DevSecOps policies...", "dim");
+        printLine("[ OK ] Portfolio shell ready.", "dim");
         printLine("");
-        printLine("            DEVOPS CONTINUOUS LOOP");
+        printLine("bikramc@portfolio", "dim");
+        printLine("--------------------------", "dim");
+        printLine("Role:        Sr. DevSecOps Engineer", "dim");
+        printLine("Focus:       Kubernetes, CI/CD, Security, Observability", "dim");
+        printLine("Mindset:     Practical, secure, cost-aware", "dim");
+        printLine("Status:      Open to impactful engineering work", "dim");
         printLine("");
-        printLine("Welcome to Bikram Chidi's terminal portfolio.", "dim");
-        printLine(
-          "DevOps / DevSecOps Engineer | Kubernetes | CI/CD | Observability",
-          "dim"
-        );
-        printLine(
-          "Type 'help' to explore. Try: summary, whyhireme, value, pipeline",
-          "dim"
-        );
+        printLine(`MOTD: ${motd}`, "dim");
         printLine("");
+        printLine("Want to know more?  Start here:", "dim");
+        printLine("summary      - quick overview", "dim");
+        printLine("whyhireme    - why I stand out", "dim");
+        printLine("principles   - how I think", "dim");
+        printLine("contact      - let's connect", "dim");
+        printLine("");
+        printLine(`Last login: ${formatLoginTime(now)} on tty1`, "dim");
+        printLine("System load: low | Portfolio mode: interactive", "dim");
       }
 
       function getExperienceUptimeString() {
@@ -500,6 +514,23 @@
         return `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
       }
 
+      function formatLoginTime(date) {
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const day = days[date.getDay()];
+        const month = months[date.getMonth()];
+        const d = String(date.getDate()).padStart(2, "0");
+        const h = String(date.getHours()).padStart(2, "0");
+        const m = String(date.getMinutes()).padStart(2, "0");
+        const s = String(date.getSeconds()).padStart(2, "0");
+        const offsetMin = -date.getTimezoneOffset();
+        const sign = offsetMin >= 0 ? "+" : "-";
+        const abs = Math.abs(offsetMin);
+        const offH = String(Math.floor(abs / 60)).padStart(2, "0");
+        const offM = String(abs % 60).padStart(2, "0");
+        return `${day} ${month} ${d} ${h}:${m}:${s} ${sign}${offH}${offM}`;
+      }
+
       function runCommand(raw) {
         const trimmed = raw.trim();
 
@@ -517,7 +548,7 @@
           case "help": {
             printLine("Available commands:", "dim");
             printLine(
-              "help, uptime, whoami, summary, whyhireme, principles, philosophy, experience, education, contact, jokes, htop, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
+              "help, uptime, whoami, summary, whyhireme, principles, philosophy, experience, education, contact, jokes, htop, skills, neofetch, ls, cat <file>, github, linkedin, clear",
               "dim"
             );
             break;
@@ -542,18 +573,19 @@
           case "summary": {
             printLine("SUMMARY", "dim");
             printLine(
-              "I am very passionate about Linux and fond of the open-source community. Automation is the culture of DevOps: making others' and my own work simpler and easier. I find DevOps an attractive and effective role. I am sincere, straightforward, and helpful; together we can create meaningful work."
+              "I am very passionate about Linux and fond of the open-source community. Automation is the culture of DevOps: making others' and my own work simpler and easier. I find DevOps an attractive and effective role. I am sincere, straightforward, and helpful; together we can create meaningful work.",
+              "dim"
             );
             break;
           }
           case "whyhireme": {
-            printLine("I don't just deploy apps — I build reliable systems.");
+            printLine("I don't just deploy apps — I build reliable systems.", "dim");
             printLine("");
-            printLine("- DevOps + DevSecOps mindset");
-            printLine("- Strong focus on automation and reliability");
-            printLine("- Comfortable with Kubernetes, CI/CD, Linux, and observability, AWS");
-            printLine("- Security-aware approach to pipelines and infrastructure");
-            printLine("- Approach problems with ownership, not just task completion");
+            printLine("- DevOps + DevSecOps mindset", "dim");
+            printLine("- Strong focus on automation and reliability", "dim");
+            printLine("- Comfortable with Kubernetes, CI/CD, Linux, and observability, AWS", "dim");
+            printLine("- Security-aware approach to pipelines and infrastructure", "dim");
+            printLine("- Approach problems with ownership, not just task completion", "dim");
             printLine("");
             printLine("What makes me different:", "dim");
             printLine("");
@@ -568,25 +600,25 @@
             break;
           }
           case "principles": {
-            printLine("Engineering principles I care about:");
+            printLine("Engineering principles I care about:", "dim");
             printLine("");
-            printLine("- Automate what repeats");
-            printLine("- Secure what matters");
-            printLine("- Monitor what you depend on");
-            printLine("- Keep systems simple enough to operate confidently");
-            printLine("- Build for reliability, not just speed");
-            printLine("- Choose the right tooling, not the most tooling");
-            printLine("- Respect cost as a real engineering constraint");
+            printLine("- Automate what repeats", "dim");
+            printLine("- Secure what matters", "dim");
+            printLine("- Monitor what you depend on", "dim");
+            printLine("- Keep systems simple enough to operate confidently", "dim");
+            printLine("- Build for reliability, not just speed", "dim");
+            printLine("- Choose the right tooling, not the most tooling", "dim");
+            printLine("- Respect cost as a real engineering constraint", "dim");
             break;
           }
           case "philosophy": {
-            printLine("My DevOps philosophy:");
+            printLine("My DevOps philosophy:", "dim");
             printLine("");
-            printLine("- DevOps is not just about tools — it's about reducing friction");
-            printLine("- Automation should save time, not create unnecessary complexity");
-            printLine("- Security should be built in, not added later");
-            printLine("- Observability should improve confidence, not become noise");
-            printLine("- Infrastructure should be reliable, maintainable, and cost-aware");
+            printLine("- DevOps is not just about tools — it's about reducing friction", "dim");
+            printLine("- Automation should save time, not create unnecessary complexity", "dim");
+            printLine("- Security should be built in, not added later", "dim");
+            printLine("- Observability should improve confidence, not become noise", "dim");
+            printLine("- Infrastructure should be reliable, maintainable, and cost-aware", "dim");
             printLine("");
             printLine(
               "I believe DevOps should work for startups, growing teams, and enterprises —",
@@ -601,7 +633,7 @@
           case "experience": {
             printLine("WORK HISTORY", "dim");
             printLine(
-              "1) DevOps Engineer (Feb 2021 - Present) - Hazesoft.co, Shankamul, Kathmandu"
+              "1) Sr. DevOps Engineer (Feb 2021 - Present) - Hazesoft.co, Shankamul, Kathmandu"
             );
             printLine(
               "   Lead team, manage GitLab + runners, CI/CD templates, helm/k8s for 20+ services, DigitalOcean + self-hosted OpenStack, Docker/Compose, NFS, Vault, VPN, ELK, Postgres/MySQL.",
@@ -715,36 +747,29 @@
             break;
           }
           case "skills": {
-            printLine("Cloud & Infra:");
-            printLine("- Linux, Nginx, Cloudflare, Digitalocean, AWS");
+            printLine("Cloud & Infra:", "dim");
+            printLine("- Linux, Nginx, Cloudflare, Digitalocean, AWS", "dim");
             printLine("");
-            printLine("Containers & Orchestration:");
-            printLine("- Docker, Kubernetes, Helm");
+            printLine("Containers & Orchestration:", "dim");
+            printLine("- Docker, Kubernetes, Helm", "dim");
             printLine("");
-            printLine("CI/CD:");
-            printLine("- GitLab CI/CD, GitHub Actions, GitLab CI/CD Templates");
+            printLine("CI/CD:", "dim");
+            printLine("- GitLab CI/CD, GitHub Actions, GitLab CI/CD Templates", "dim");
             printLine("");
-            printLine("Observability:");
-            printLine("- Prometheus, Grafana, Alertmanager, Sentry");
+            printLine("Observability:", "dim");
+            printLine("- Prometheus, Grafana, Alertmanager, Sentry", "dim");
             printLine("");
-            printLine("DevSecOps:");
-            printLine("- SonarQube, Trivy, Secret Management, TLS Hardening, Secure Pipelines");
+            printLine("DevSecOps:", "dim");
+            printLine("- SonarQube, Trivy, Secret Management, TLS Hardening, Secure Pipelines", "dim");
             printLine("");
-            printLine("Databases & Backup:");
-            printLine("- PostgreSQL, MongoDB");
+            printLine("Databases & Backup:", "dim");
+            printLine("- PostgreSQL, MongoDB", "dim");
             printLine("");
-            printLine("IaC & Automation:");
-            printLine("- Terraform, Ansible");
+            printLine("IaC & Automation:", "dim");
+            printLine("- Terraform, Ansible", "dim");
             printLine("");
-            printLine("Secrets & Vault:");
-            printLine("- HashiCorp Vault");
-            break;
-          }
-          case "projects": {
-            printLine("- Kubernetes Monitoring Stack (Prometheus/Grafana/ELK)");
-            printLine("- GitLab CI/CD Migration (pipelines + runners)");
-            printLine("- Distributed Job Runner (workers + queues)");
-            printLine("- Helm Services (20+ microservices)");
+            printLine("Secrets & Vault:", "dim");
+            printLine("- HashiCorp Vault", "dim");
             break;
           }
           case "neofetch": {
@@ -758,7 +783,7 @@
           }
           case "ls": {
             printLine(
-              "about.txt  summary.txt  experience.txt  education.txt  contact.txt  jokes.txt  skills.txt  projects.txt"
+              "about.txt  summary.txt  experience.txt  education.txt  contact.txt  jokes.txt  skills.txt"
             );
             break;
           }
@@ -794,10 +819,6 @@
             }
             if (file === "skills.txt") {
               runCommand("skills");
-              break;
-            }
-            if (file === "projects.txt") {
-              runCommand("projects");
               break;
             }
             printLine(`cat: ${file}: No such file`, "err");
