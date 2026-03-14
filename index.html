@@ -408,7 +408,8 @@
       function printLine(text, className) {
         const div = document.createElement("div");
         div.className = className ? `line ${className}` : "line";
-        div.textContent = text;
+        const content = text === "" ? "\u00a0" : text;
+        div.textContent = content;
         output.appendChild(div);
         scrollToBottom();
       }
@@ -438,7 +439,7 @@
         printLine("Mindset:     Practical, secure, cost-aware", "dim");
         printLine("Status:      Open to impactful engineering work", "dim");
         printLine("");
-        printLine(`MOTD: ${motd}`, "dim");
+        printLine(`MOTD: ${motd}`);
         printLine("");
         printLine("Want to know more?  Start here:", "dim");
         printLine("summary      - quick overview", "dim");
