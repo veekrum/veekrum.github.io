@@ -305,6 +305,9 @@
         "uptime",
         "whoami",
         "summary",
+        "whyhireme",
+        "principles",
+        "philosophy",
         "experience",
         "education",
         "contact",
@@ -421,17 +424,13 @@
         printLine("");
         printLine("            DEVOPS CONTINUOUS LOOP");
         printLine("");
-        printLine("Welcome to Bikram's terminal portfolio.", "dim");
+        printLine("Welcome to Bikram Chidi's terminal portfolio.", "dim");
         printLine(
-          "Type `help` for commands. Try `whoami` and `uptime`.",
+          "DevOps / DevSecOps Engineer | Kubernetes | CI/CD | Observability",
           "dim"
         );
         printLine(
-          "I am very passionate about Linux and fond of the open-source community.",
-          "dim"
-        );
-        printLine(
-          "Automation is the culture of DevOps: making work simpler and easier.",
+          "Type 'help' to explore. Try: summary, whyhireme, value, pipeline",
           "dim"
         );
         printLine("");
@@ -518,7 +517,7 @@
           case "help": {
             printLine("Available commands:", "dim");
             printLine(
-              "help, uptime, whoami, summary, experience, education, contact, jokes, htop, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
+              "help, uptime, whoami, summary, whyhireme, principles, philosophy, experience, education, contact, jokes, htop, skills, projects, neofetch, ls, cat <file>, github, linkedin, clear",
               "dim"
             );
             break;
@@ -544,6 +543,58 @@
             printLine("SUMMARY", "dim");
             printLine(
               "I am very passionate about Linux and fond of the open-source community. Automation is the culture of DevOps: making others' and my own work simpler and easier. I find DevOps an attractive and effective role. I am sincere, straightforward, and helpful; together we can create meaningful work."
+            );
+            break;
+          }
+          case "whyhireme": {
+            printLine("I don't just deploy apps — I build reliable systems.");
+            printLine("");
+            printLine("- DevOps + DevSecOps mindset");
+            printLine("- Strong focus on automation and reliability");
+            printLine("- Comfortable with Kubernetes, CI/CD, Linux, and observability, AWS");
+            printLine("- Security-aware approach to pipelines and infrastructure");
+            printLine("- Approach problems with ownership, not just task completion");
+            printLine("");
+            printLine("What makes me different:", "dim");
+            printLine("");
+            printLine(
+              "I think beyond \"it works\" — I think about how it scales, how it's monitored,",
+              "dim"
+            );
+            printLine(
+              "how it's secured, and how the team can operate it confidently.",
+              "dim"
+            );
+            break;
+          }
+          case "principles": {
+            printLine("Engineering principles I care about:");
+            printLine("");
+            printLine("- Automate what repeats");
+            printLine("- Secure what matters");
+            printLine("- Monitor what you depend on");
+            printLine("- Keep systems simple enough to operate confidently");
+            printLine("- Build for reliability, not just speed");
+            printLine("- Choose the right tooling, not the most tooling");
+            printLine("- Respect cost as a real engineering constraint");
+            break;
+          }
+          case "philosophy": {
+            printLine("My DevOps philosophy:");
+            printLine("");
+            printLine("- DevOps is not just about tools — it's about reducing friction");
+            printLine("- Automation should save time, not create unnecessary complexity");
+            printLine("- Security should be built in, not added later");
+            printLine("- Observability should improve confidence, not become noise");
+            printLine("- Infrastructure should be reliable, maintainable, and cost-aware");
+            printLine("");
+            printLine(
+              "I believe DevOps should work for startups, growing teams, and enterprises —",
+              "dim"
+            );
+            printLine(
+              "not only for organizations with big budgets.",
+              "dim"
             );
             break;
           }
@@ -664,17 +715,29 @@
             break;
           }
           case "skills": {
-            printLine("Linux");
-            printLine("Kubernetes, Helm");
-            printLine("Docker, Docker Compose, Docker Swarm");
-            printLine("GitLab (self-hosted), GitLab CI/CD, runners");
-            printLine("Jenkins");
-            printLine("Terraform, Ansible");
-            printLine("Observability: ELK, Prometheus, Grafana, CloudWatch, Nagios");
-            printLine("Cloud: AWS, GCP, DigitalOcean, OpenStack");
-            printLine("Networking: VPC, ALB, WAF, VPN, HAProxy, NFS");
-            printLine("Datastores: PostgreSQL, MySQL, MongoDB, Redis");
-            printLine("Messaging: RabbitMQ");
+            printLine("Cloud & Infra:");
+            printLine("- Linux, Nginx, Cloudflare, Digitalocean, AWS");
+            printLine("");
+            printLine("Containers & Orchestration:");
+            printLine("- Docker, Kubernetes, Helm");
+            printLine("");
+            printLine("CI/CD:");
+            printLine("- GitLab CI/CD, GitHub Actions, GitLab CI/CD Templates");
+            printLine("");
+            printLine("Observability:");
+            printLine("- Prometheus, Grafana, Alertmanager, Sentry");
+            printLine("");
+            printLine("DevSecOps:");
+            printLine("- SonarQube, Trivy, Secret Management, TLS Hardening, Secure Pipelines");
+            printLine("");
+            printLine("Databases & Backup:");
+            printLine("- PostgreSQL, MongoDB");
+            printLine("");
+            printLine("IaC & Automation:");
+            printLine("- Terraform, Ansible");
+            printLine("");
+            printLine("Secrets & Vault:");
+            printLine("- HashiCorp Vault");
             break;
           }
           case "projects": {
